@@ -3,10 +3,10 @@ import os
 """ A very simple demonstrating for starting the RDW simulation from python, waiting for process to finish,
 and then starting a new process. """
 
+path = "C:\\Users\\messinjf\\Documents\\RDWSimulationStandalone"
+processName = "RDWSimulation.exe"
+
 if __name__ == "__main__":
-    path = "C:\\Users\\messinjf\\Documents\\RDWSimulationStandalone"
-    processName = "RDWSimulation.exe"
-    #os.system(path + os.sep + processName)
 	
     #parameters
     wallScalingFactor = 0.01
@@ -20,3 +20,14 @@ if __name__ == "__main__":
         fitness = os.system(path + os.sep + processName + arguments)
         fitness = float(fitness) / (10.0 ** 6.0)
         print(fitness)
+        
+def startSimulation(APFEncodingObject):
+    arguments = " {} {} {} {} {}".format(APFEncodingObject.wallScalingFactor,
+                  APFEncodingObject.wallFalloffFactor,
+                  APFEncodingObject.userFalloffFactor,
+                  APFEncodingObject.userForceHeuristic,
+                  APFEncodingObject.wallForceHeuristic)
+    fitness = os.system(path + os.sep + processName + arguments)
+    fitness = float(fitness) / (10.0 ** 6.0)
+    #print(fitness)
+    return fitness

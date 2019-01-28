@@ -12,6 +12,8 @@ class APFEncoding:
     
     userForceHeuristicOptions = ["none", "average", "max", "linear"]
     wallForceHeuristicOptions = ["normal", "pointing"]
+    
+    numberOfBits = 51
 
     def __init__(self, wallScalingFactor = None, wallFalloffFactor = None,
                  userFalloffFactor = None, userForceHeuristic = None,
@@ -21,6 +23,8 @@ class APFEncoding:
         self.userFalloffFactor = userFalloffFactor
         self.userForceHeuristic = userForceHeuristic
         self.wallForceHeuristic = wallForceHeuristic
+        self.parameters = (wallScalingFactor, wallFalloffFactor, userFalloffFactor,
+                      userForceHeuristic, wallForceHeuristic)
         
     def __str__(self):
         string = (str(self.wallScalingFactor) + " " +
@@ -66,23 +70,24 @@ class APFEncoding:
     """ Create an APFEncoding with random values by creating random bit
     strings and determining if they are valid. """
     @classmethod
-    def randomBitString(cls):
-        numberOfBits = 20 + 14 + 14 + 2 + 1
-        
-        parameters = None
-        while(not APFEncoding.isValid(parameters)):
-            dna = np.random.choice([0, 1], numberOfBits)
+    def randomBitString(cls): 
+        dna = np.random.choice([0, 1], APFEncoding.numberOfBits)
+        dna = reduce(lambda x, y: str(x) + str(y), dna)
+        parameters = APFEncoding.decode(dna)
+        obj = APFEncoding(parameters[0], parameters[1],
+                 parameters[2], parameters[3], parameters[4])
+        while(not obj.isValid()):
+            dna = np.random.choice([0, 1], APFEncoding.numberOfBits)
             dna = reduce(lambda x, y: str(x) + str(y), dna)
             parameters = APFEncoding.decode(dna)
-        return APFEncoding(parameters[0], parameters[1],
+            obj = APFEncoding(parameters[0], parameters[1],
                  parameters[2], parameters[3], parameters[4])
+        return obj
         
     @classmethod
     def APFEncodingFromBitString(cls, bitString):
+        assert(len(bitString) == APFEncoding.numberOfBits)
         parameters = APFEncoding.decode(bitString)
-        if(not APFEncoding.isValid(parameters)):
-            pass
-            #print("Warning: this bitString is not valid.")
         return APFEncoding(parameters[0], parameters[1],
                  parameters[2], parameters[3], parameters[4])
     
@@ -113,12 +118,11 @@ class APFEncoding:
         #print("Resulting parameters: {}".format(parameters))
         return parameters
     
-    @staticmethod
-    def isValid(parameters):
-        if parameters == None : return False
-        return ((parameters[0] > 0.0 and parameters[0] < 1000.0) and
-                (parameters[1] > 0.0 and parameters[1] < 10.0) and
-                (parameters[2] > 0.0 and parameters[2] < 10.0))
+    def isValid(self):
+        if self.parameters == None : return False
+        return ((self.wallScalingFactor > 0.0 and self.wallScalingFactor < 1000.0) and
+                (self.wallFalloffFactor > 0.0 and self.wallFalloffFactor < 10.0) and
+                (self.userFalloffFactor > 0.0 and self.userFalloffFactor < 10.0))
     
     @staticmethod
     def getRandomBitString(bits):
