@@ -1,4 +1,5 @@
 import os
+from functools import reduce
 
 """ A very simple demonstrating for starting the RDW simulation from python, waiting for process to finish,
 and then starting a new process. """
@@ -22,11 +23,17 @@ if __name__ == "__main__":
         print(fitness)
         
 def startSimulation(APFEncodingObject):
-    arguments = " {} {} {} {} {}".format(APFEncodingObject.wallScalingFactor,
-                  APFEncodingObject.wallFalloffFactor,
-                  APFEncodingObject.userFalloffFactor,
-                  APFEncodingObject.userForceHeuristic,
-                  APFEncodingObject.wallForceHeuristic)
+#    arguments = " {} {} {} {} {}".format(APFEncodingObject.wallScalingFactor,
+#                  APFEncodingObject.wallFalloffFactor,
+#                  APFEncodingObject.userFalloffFactor,
+#                  APFEncodingObject.userForceHeuristic,
+#                  APFEncodingObject.wallForceHeuristic)
+    arguments = [" " + str(v) for k, v in APFEncodingObject.dictionary.items()]
+    
+    # Testing setting C=1
+    arguments[0] = " 1.000"
+    
+    arguments = reduce(lambda x, y: x + y, arguments)
     fitness = os.system(path + os.sep + processName + arguments)
     fitness = float(fitness) / (10.0 ** 6.0)
     #print(fitness)
