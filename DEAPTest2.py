@@ -30,8 +30,8 @@ import PythonSimpleSimulationStartup
 
 
 #CONSTANTS
-NGEN = 40 # Number of generations
-NPOP = 25 # Number of individuals
+NGEN = 20 # Number of generations
+NPOP = 30 # Number of individuals
 CXPB = 0.8 # Probability of crossover
 MUTPB = 1.0 # Probability of mutation
 INDPB = 1/APFEncoding.APFEncoding.numberOfBits # Probability of each bit flipping
@@ -61,13 +61,27 @@ def createToolbox():
     
     return toolbox
 
-def createStats():
+def oldcreateStats():
+    # Needed for compatibility reasons
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", numpy.mean)
     stats.register("std", numpy.std)
     stats.register("Q1", lambda x: numpy.percentile(x,25))
     stats.register("Q3", lambda x: numpy.percentile(x,75))
     stats.register("meadian", lambda x: numpy.percentile(x,50))
+
+def createStats():
+    stats = tools.Statistics(lambda ind: ind.fitness.values)
+    stats.register("avg", numpy.mean)
+    stats.register("std", numpy.std)
+    stats.register("Q1", lambda x: numpy.percentile(x,25))
+    stats.register("Q3", lambda x: numpy.percentile(x,75))
+    # Note was mispelled before Feb 27 (may mess with loading files with pickle)
+    stats.register("median", lambda x: numpy.percentile(x,50))
+    
+    # Added Feb 27
+    stats.register("min", lambda x: numpy.argmin(x))
+    stats.register("max", lambda x: numpy.argmax(x))
     return stats
 
 def evaluate(individual):
@@ -129,7 +143,7 @@ def main(checkpoint=None):
             cp = dict(population=population, generation=gen, halloffame=halloffame,
                       logbook=logbook, rndstate=random.getstate())
 
-            with open("Feb25_square30x30_3user_Cequals1.pkl", "wb") as cp_file:
+            with open("Mar31Full_run.pkl", "wb") as cp_file:
                 pickle.dump(cp, cp_file)
                 
     return population, logbook, record
@@ -153,7 +167,7 @@ def main(checkpoint=None):
 
 if __name__ == "__main__":
     #pop, log, hof = main("checkpoint_name.pkl")
-    pop, log, hof = main()
+    pop, log, hof = main("Mar31Full_run.pkl")
     print(pop)
     print(log)
     print(hof)

@@ -13,13 +13,23 @@ class APFEncoding:
     userForceHeuristicOptions = ["none", "average", "max", "linear"]
     wallForceHeuristicOptions = ["normal", "pointing"]
     
+#    paramDict = {"wallScalingFactor" : 20,
+#                  "wallFalloffFactor" : 13,
+#                  "userFalloffFactor" : 13,
+#                  "userForceHeuristic" : 2,
+#                  "wallForceHeuristic" : 1,
+#                  "distanceBetweenUsers" : 14,
+#                  "startingLineRotation" : 19}
+    #changed on May 27
     paramDict = {"wallScalingFactor" : 20,
                   "wallFalloffFactor" : 13,
                   "userFalloffFactor" : 13,
                   "userForceHeuristic" : 2,
                   "wallForceHeuristic" : 1,
-                  "distanceBetweenUsers" : 14,
+                  "distanceBetweenUsers" : 13,
                   "startingLineRotation" : 19}
+    
+    
     floatingPointParameters = ["wallScalingFactor", "wallFalloffFactor", "userFalloffFactor", "distanceBetweenUsers", "startingLineRotation"]
     integerParameters = ["userForceHeuristic", "wallForceHeuristic"]
     numberOfBits = reduce(lambda x, y: x + y, list(paramDict.values()))
@@ -159,7 +169,7 @@ class APFEncoding:
         return ((self.dictionary["wallScalingFactor"] > 0.0 and self.dictionary["wallScalingFactor"] < 1000.0) and
                 (self.dictionary["wallFalloffFactor"] > 0.0 and self.dictionary["wallFalloffFactor"] < 10.0) and
                 (self.dictionary["userFalloffFactor"] > 0.0 and self.dictionary["userFalloffFactor"] < 10.0) and
-                (self.dictionary["distanceBetweenUsers"] > 2.0)
+                (self.dictionary["distanceBetweenUsers"] > 2.0 and self.dictionary["distanceBetweenUsers"] < 8.0)
                 )
     
     @staticmethod
